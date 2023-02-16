@@ -1,0 +1,33 @@
+#!/bin/bash
+
+[ ! $ALL_PROXY ] && ALL_PROXY="socks5://127.0.0.1:60001"
+[ ! $HTTP_PROXY ] && HTTP_PROXY="socks5://127.0.0.1:60001"
+[ ! $HTTPS_PROXY ] && HTTPS_PROXY="socks5://127.0.0.1:60001"
+
+#echo $ALL_PROXY
+#echo $HTTP_PROXY
+#echo $HTTPS_PROXY
+
+print_proxy_info(){
+    echo "all_proxy=${all_proxy}"
+    echo "http_proxy=${http_proxy}"
+    echo "https_proxy=${https_proxy}"
+}
+
+[ $# -lt 1 ] && print_proxy_info && return 0
+
+if [ "$1" == "on" ]; then
+    echo "Setting proxy ..."
+    export all_proxy="$ALL_PROXY"
+    export http_proxy="$HTTP_PROXY"
+    export https_proxy="$HTTPS_PROXY"
+    echo "After setted: "
+    print_proxy_info
+elif [ "$1" == "off" ]; then
+    echo "Unsetting proxy ..."
+    unset all_proxy
+    unset http_proxy
+    unset https_proxy
+else
+	echo "USAGE: setproxy ([on | off])"
+fi

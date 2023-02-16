@@ -1,0 +1,101 @@
+#!/bin/bash
+
+# To mark config files that have been updated
+MARKER="(: MARKER :)"
+CURRENT_PATH=$(realpath .)
+
+
+# Import bashrc string
+import_bashrc='
+# Import .bashrc from config.sh
+if [ -f "$CURRENT_PATH/.bashrc" ]; then
+    . "$CURRENT_PATH/.bashrc"
+fi'
+
+
+# Update or link .bashrc
+echo "Processing .bashrc ..."
+echo "========================="
+
+if [ -f "$HOME/.bashrc" ]; then
+    grep "$MARKER" $HOME/.bashrc > /dev/null
+    if [ $? -ne 0 ]; then
+		echo -e "Adding CURRENT_PATH env"
+		echo >> "$HOME/.bashrc"
+		echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bashrc"
+
+		#echo >> "$HOME/.bashrc"
+        echo "Adding $CURRENT_PATH/.bashrc ..."
+        echo "$import_bashrc" >> "$HOME/.bashrc"
+    fi
+else
+    echo "Linking config.sh/.bashrc ..."
+    ln -s $CURRENT_PATH/.bashrc $HOME/.bashrc
+fi
+echo
+
+
+
+# Import bash_profile string
+import_bash_profile='
+# Import .bash_profile from config.sh (: MARKER :)
+if [ -f "$CURRENT_PATH/.bash_profile" ]; then
+    . "$CURRENT_PATH/.bash_profile"
+fi'
+
+
+# Update or link .bashrc
+echo "Processing .bash_profile ..."
+echo "========================="
+if [ -f "$HOME/.bash_profile" ]; then
+    grep "$MARKER" $HOME/.bash_profile > /dev/null
+    if [ $? -ne 0 ]; then
+		echo -e "Adding CURRENT_PATH env"
+		echo >> "$HOME/.bash_profile"
+		echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bash_profile"
+
+        echo "$import_bash_profile" >> "$HOME/.bash_profile"
+        echo "Adding $CURRENT_PATH/.bash_profile ..."
+    fi
+else
+    ln -s $CURRENT_PATH/.bash_profile $HOME/.bash_profile
+    echo "Linking $CURRENT_PATH/.bash_profile ..."
+fi
+echo
+
+
+# Link lf config
+echo "Processing lf ..."
+echo "========================="
+if [ ! -d "$HOME/.config/lf" ]; then
+    ln -s $CURRENT_PATH/.config/lf $HOME/.config/lf
+fi
+echo
+
+
+# Link tmux config
+echo "Processing tmux ..."
+echo "========================="
+if [ ! -f "$HOME/.tmux.conf" ]; then
+    ln -s $CURRENT_PATH/.config/tmux/tmux.conf $HOME/.tmux.conf
+fi
+echo
+
+
+# Link proxy config
+echo "Processing proxy ..."
+echo "========================="
+if [ -d "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/bin/setproxy" ]; then
+    ln -s $CURRENT_PATH/.local/bin/setproxy $HOME/.local/bin/setproxy
+fi
+echo
+
+
+# Configure vim
+echo -e "Configuring vim ..."
+echo "========================="
+if [ ! -d "$HOME/.vim" ]; then
+	git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
+	cd "$HOME/.vim"
+	/bin/bash ./setup.sh
+fi
