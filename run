@@ -68,6 +68,7 @@ echo
 echo "Processing lf ..."
 echo "========================="
 if [ ! -d "$HOME/.config/lf" ]; then
+	[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
     ln -s $CURRENT_PATH/.config/lf $HOME/.config/lf
 fi
 echo
