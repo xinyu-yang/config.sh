@@ -109,8 +109,8 @@ config_lf(){
 ###################################
 inst_tmux_root(){
 	print_info "Installing tmux ..."
-	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config
-	wget https://github.com/tmux/tmux/releases/download/3.3/tmux-3.3.tar.gz /tmp/tmux.tar.gz
+	sudo apt install -y libevent-dev ncurses-dev build-essential bison pkg-config
+	wget https://github.com/tmux/tmux/releases/download/3.3/tmux-3.3.tar.gz -O /tmp/tmux.tar.gz -nv > /dev/null
 	if $(file /tmp/tmux.tar.gz | grep gzip > /dev/null);
 	then
 		mkdir /tmp/tmuxexport
@@ -162,9 +162,10 @@ config_vim(){
 	print_info "Configuring vim ..."
 	if [ ! -d "$HOME/.vim" ]; then
 		git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
-		cd "$HOME/.vim"
-		/bin/bash ./setup.sh
 	fi
+	cd "$HOME/.vim"
+	/bin/bash ./setup.sh
+	cd -
 }
 
 
