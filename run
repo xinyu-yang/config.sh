@@ -4,99 +4,217 @@
 MARKER="(: MARKER :)"
 CURRENT_PATH=$(realpath .)
 
+# log functions
+print_info() { echo -e [INFO] $1; }
+print_warn() { echo -e [WARNING] $1; }
+print_error() { echo -e [ERROR] $1; }
 
+
+###################################
+# bash
+###################################
 # Import bashrc string
 import_bashrc='
 # Import .bashrc from config.sh
 if [ -f "$CURRENT_PATH/.bashrc" ]; then
-    . "$CURRENT_PATH/.bashrc"
+	. "$CURRENT_PATH/.bashrc"
 fi'
-
-
-# Update or link .bashrc
-echo "Processing .bashrc ..."
-echo "========================="
-
-if [ -f "$HOME/.bashrc" ]; then
-    grep "$MARKER" $HOME/.bashrc > /dev/null
-    if [ $? -ne 0 ]; then
-		echo -e "Adding CURRENT_PATH env"
-		echo >> "$HOME/.bashrc"
-		echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bashrc"
-
-		#echo >> "$HOME/.bashrc"
-        echo "Adding $CURRENT_PATH/.bashrc ..."
-        echo "$import_bashrc" >> "$HOME/.bashrc"
-    fi
-else
-    echo "Linking config.sh/.bashrc ..."
-    ln -s $CURRENT_PATH/.bashrc $HOME/.bashrc
-fi
-echo
-
-
 
 # Import bash_profile string
 import_bash_profile='
 # Import .bash_profile from config.sh (: MARKER :)
 if [ -f "$CURRENT_PATH/.bash_profile" ]; then
-    . "$CURRENT_PATH/.bash_profile"
+	. "$CURRENT_PATH/.bash_profile"
 fi'
 
+config_bash(){
+	# Update or link .bashrc
+	print_info "Processing .bashrc ..."
 
-# Update or link .bashrc
-echo "Processing .bash_profile ..."
-echo "========================="
-if [ -f "$HOME/.bash_profile" ]; then
-    grep "$MARKER" $HOME/.bash_profile > /dev/null
-    if [ $? -ne 0 ]; then
-		echo -e "Adding CURRENT_PATH env"
-		echo >> "$HOME/.bash_profile"
-		echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bash_profile"
+	if [ -f "$HOME/.bashrc" ]; then
+		grep "$MARKER" $HOME/.bashrc > /dev/null
+		if [ $? -ne 0 ]; then
+			echo -e "Adding CURRENT_PATH env"
+			echo >> "$HOME/.bashrc"
+			echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bashrc"
 
-        echo "$import_bash_profile" >> "$HOME/.bash_profile"
-        echo "Adding $CURRENT_PATH/.bash_profile ..."
-    fi
-else
-    ln -s $CURRENT_PATH/.bash_profile $HOME/.bash_profile
-    echo "Linking $CURRENT_PATH/.bash_profile ..."
-fi
-echo
+			#echo >> "$HOME/.bashrc"
+			echo "Adding $CURRENT_PATH/.bashrc ..."
+			echo "$import_bashrc" >> "$HOME/.bashrc"
+		fi
+	else
+		echo "Linking config.sh/.bashrc ..."
+		ln -s $CURRENT_PATH/.bashrc $HOME/.bashrc
+	fi
 
+	# Update or link .bash_profile
+	print_info "Processing .bash_profile ..."
+	if [ -f "$HOME/.bash_profile" ]; then
+		grep "$MARKER" $HOME/.bash_profile > /dev/null
+		if [ $? -ne 0 ]; then
+			echo -e "Adding CURRENT_PATH env"
+			echo >> "$HOME/.bash_profile"
+			echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bash_profile"
+
+			echo "$import_bash_profile" >> "$HOME/.bash_profile"
+			echo "Adding $CURRENT_PATH/.bash_profile ..."
+		fi
+	else
+		ln -s $CURRENT_PATH/.bash_profile $HOME/.bash_profile
+		echo "Linking $CURRENT_PATH/.bash_profile ..."
+	fi
+}
+
+
+###################################
+# lf (https://github.com/gokcehan/lf)
+###################################
+# Install lf
+inst_lf_root(){
+	print_info "Installing lf..."
+	url=$(curl -Ls -w %{url_effective} -o /dev/null https://github.com/gokcehan/lf/releases/latest)
+	wget ${url/tag/download}/lf-linux-amd64.tar.gz -O /tmp/lf.tar.gz -nv > /dev/null
+	if $(file /tmp/lf.tar.gz | grep gzip > /dev/null);
+	then
+		mkdir /tmp/lfexport
+		tar zxf /tmp/lf.tar.gz -C /tmp/lfexport
+		if [ $IS_SUDOER -eq 1 ];
+		then
+			sudo mv /tmp/lfexport/lf /usr/local/bin/
+		else
+			mv /tmp/lfexport/lf ~/.local/bin/
+		fi
+		print_info "lf installed."
+	fi
+	rm /tmp/lf.tar.gz
+	rm -rf /tmp/lfexport
+}
+
+inst_lf_noroot(){
+	inst_lf_root
+}
 
 # Link lf config
-echo "Processing lf ..."
-echo "========================="
-if [ ! -d "$HOME/.config/lf" ]; then
-	[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
-    ln -s $CURRENT_PATH/.config/lf $HOME/.config/lf
-fi
-echo
+config_lf(){
+	print_info "Processing lf ..."
+	if [ ! -d "$HOME/.config/lf" ]; then
+		[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
+		ln -s $CURRENT_PATH/.config/lf $HOME/.config/lf
+	fi
+}
 
+
+###################################
+# tmux (https://github.com/tmux/tmux)
+###################################
+inst_tmux_root(){
+	print_info "Installing tmux ..."
+	sudo apt install libevent-dev ncurses-dev build-essential bison pkg-config
+	wget https://github.com/tmux/tmux/releases/download/3.3/tmux-3.3.tar.gz /tmp/tmux.tar.gz
+	if $(file /tmp/tmux.tar.gz | grep gzip > /dev/null);
+	then
+		mkdir /tmp/tmuxexport
+		tar zxf /tmp/lf.tar.gz -C /tmp/tmuxexport
+		cd /tmp/tmuxexport
+		./configure && make -j 4
+		if [ $IS_SUDOER -eq 1 ];
+		then
+			sudo make install
+		else
+			# useless
+			make install
+		fi
+		print_info "tmux installed."
+	fi
+	cd -
+	rm /tmp/tmux.tar.gz
+	rm -rf /tmp/tmuxexport
+}
+
+# Currently, tmux must be installed manually for non-root users.
+# inst_tmux_noroot() {}
 
 # Link tmux config
-echo "Processing tmux ..."
-echo "========================="
-if [ ! -f "$HOME/.tmux.conf" ]; then
-    ln -s $CURRENT_PATH/.config/tmux/tmux.conf $HOME/.tmux.conf
-fi
-echo
+config_tmux(){
+	print_info "Processing tmux ..."
+	if [ ! -f "$HOME/.tmux.conf" ]; then
+		ln -s $CURRENT_PATH/.config/tmux/tmux.conf $HOME/.tmux.conf
+	fi
+}
 
 
+###################################
+# local proxy
+###################################
 # Link proxy config
-echo "Processing proxy ..."
-echo "========================="
-if [ -d "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/bin/setproxy" ]; then
-    ln -s $CURRENT_PATH/.local/bin/setproxy $HOME/.local/bin/setproxy
-fi
-echo
+config_proxy(){
+	print_info "Processing proxy ..."
+	if [ -d "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/bin/setproxy" ]; then
+		ln -s $CURRENT_PATH/.local/bin/setproxy $HOME/.local/bin/setproxy
+	fi
+}
 
 
-# Configure vim
-echo -e "Configuring vim ..."
-echo "========================="
-if [ ! -d "$HOME/.vim" ]; then
-	git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
-	cd "$HOME/.vim"
-	/bin/bash ./setup.sh
+###################################
+# Config vim
+###################################
+config_vim(){
+	print_info "Configuring vim ..."
+	if [ ! -d "$HOME/.vim" ]; then
+		git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
+		cd "$HOME/.vim"
+		/bin/bash ./setup.sh
+	fi
+}
+
+
+###################################
+# Preparations
+###################################
+# Test whether this user has sudo priviledge
+if (sudo -v > /dev/null);
+then
+	print_info "Installing as root"
+	IS_SUDOER=1
+	POSTFIX=root
+	if ! command -v curl > /dev/null;
+	then
+		print_info "Installing curl ..."
+		sudo apt install -y curl
+	fi
+	array=(lf tmux)
+else
+	print_info "Installing as non-root"
+	IS_SUDOER=0
+	POSTFIX=noroot
+	if ! command -v curl > /dev/null;
+	then
+		print_error "No curl command!"
+		print_error "Exiting..."
+		exit 1
+	fi
+	if [ ! -d "$HOME/.local/bin" ]; then
+		mkdir -p $HOME/.local/bin
+	fi
+	array=(lf)
 fi
+
+# Install prerequirements
+for app in ${array[*]}
+do
+	if command -v ${app} > /dev/null 2>&1;
+	then
+		print_warn "${app} exists!"
+	else
+		inst_${app}_${POSTFIX}
+	fi
+done
+
+
+###################################
+# MAIN
+###################################
+config_list=(bash tmux lf proxy vim)
+for app in ${config_list[*]}; do
+	config_${app}
+done
