@@ -114,8 +114,8 @@ inst_tmux_root(){
 	if $(file /tmp/tmux.tar.gz | grep gzip > /dev/null);
 	then
 		mkdir /tmp/tmuxexport
-		tar zxf /tmp/lf.tar.gz -C /tmp/tmuxexport
-		cd /tmp/tmuxexport
+		tar zxf /tmp/tmux.tar.gz -C /tmp/
+		cd /tmp/tmux-3.3/
 		./configure && make -j 4
 		if [ $IS_SUDOER -eq 1 ];
 		then
@@ -128,7 +128,7 @@ inst_tmux_root(){
 	fi
 	cd -
 	rm /tmp/tmux.tar.gz
-	rm -rf /tmp/tmuxexport
+	rm -rf /tmp/tmux-3.3/
 }
 
 # Currently, tmux must be installed manually for non-root users.
