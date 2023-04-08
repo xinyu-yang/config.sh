@@ -1,6 +1,6 @@
 #!/bin/bash
 # (: MARKER :)
-
+# This config file is only called in login shell.
 
 # Default programs:
 export EDITOR="vim"
@@ -16,18 +16,11 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # sdcv path
 export STARDICT_DATA_DIR="${XDG_DATA_HOME}/stardict"
 
-
 # if running bash
 if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-    . "$HOME/.bashrc"
-    fi
+	# include .bashrc if it exists
+	if [ -f "$HOME/.bashrc" ]; then
+		#echo "Executing source bashrc in bash_profile"
+		. "$HOME/.bashrc"
+	fi
 fi
-
-
-# Update PATH
-if [ ! -d "$HOME/.local/bin" ]; then
-	mkdir -p $HOME/.local/bin
-fi
-export "PATH=$HOME/.local/bin:$PATH"

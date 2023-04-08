@@ -4,8 +4,8 @@ To configure a new machine automatically.
 
 It contains:
 ```
-.bash_profile
-.bashrc
+bash
+fish
 vim
 tmux
 lf

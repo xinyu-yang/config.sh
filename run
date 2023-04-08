@@ -34,16 +34,16 @@ config_bash(){
 	if [ -f "$HOME/.bashrc" ]; then
 		grep "$MARKER" $HOME/.bashrc > /dev/null
 		if [ $? -ne 0 ]; then
-			echo -e "Adding CURRENT_PATH env"
+			print_info -e "Adding CURRENT_PATH env"
 			echo >> "$HOME/.bashrc"
 			echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bashrc"
 
 			#echo >> "$HOME/.bashrc"
-			echo "Adding $CURRENT_PATH/.bashrc ..."
+			print_info "Adding $CURRENT_PATH/.bashrc ..."
 			echo "$import_bashrc" >> "$HOME/.bashrc"
 		fi
 	else
-		echo "Linking config.sh/.bashrc ..."
+		print_info "Linking config.sh/.bashrc ..."
 		ln -s $CURRENT_PATH/.bashrc $HOME/.bashrc
 	fi
 
@@ -52,17 +52,38 @@ config_bash(){
 	if [ -f "$HOME/.bash_profile" ]; then
 		grep "$MARKER" $HOME/.bash_profile > /dev/null
 		if [ $? -ne 0 ]; then
-			echo -e "Adding CURRENT_PATH env"
+			print_info -e "Adding CURRENT_PATH env"
 			echo >> "$HOME/.bash_profile"
 			echo "CURRENT_PATH=$CURRENT_PATH # (: MARKER :)" >> "$HOME/.bash_profile"
 
+			print_info "Adding $CURRENT_PATH/.bash_profile ..."
 			echo "$import_bash_profile" >> "$HOME/.bash_profile"
-			echo "Adding $CURRENT_PATH/.bash_profile ..."
 		fi
 	else
+		print_info "Linking $CURRENT_PATH/.bash_profile ..."
 		ln -s $CURRENT_PATH/.bash_profile $HOME/.bash_profile
-		echo "Linking $CURRENT_PATH/.bash_profile ..."
 	fi
+}
+
+
+###################################
+# fish
+###################################
+config_fish(){
+	# Update or link fish config
+	if [ -d "$HOME/.config/fish/" ]; then
+		grep "$MARKER" $HOME/.config/fish/config.fish > /dev/null
+		if [ $? -ne 0 ]; then
+			print_info "Replacing old config ..."
+			print_info "Backup old config to $HOME/.config/fish.old/"
+			mv $HOME/.config/fish $HOME/.config/fish.old
+		else
+			print_warn "Linked config file exists!"
+			return 0
+		fi
+	fi
+	print_info "Linking config.sh/.config/fish ..."
+	ln -s $CURRENT_PATH/.config/fish $HOME/.config/fish
 }
 
 
@@ -215,7 +236,7 @@ done
 ###################################
 # MAIN
 ###################################
-config_list=(bash tmux lf proxy vim)
+config_list=(bash fish tmux lf proxy vim)
 for app in ${config_list[*]}; do
 	config_${app}
 done

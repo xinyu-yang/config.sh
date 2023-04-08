@@ -1,4 +1,6 @@
-# ~/.bashrc
+#!/bin/bash
+# (: MARKER :)
+# This config file is only called in non-login shell.
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
@@ -22,6 +24,14 @@ export PS1="\[\e[31m\][\[\e[m\]\[\e[38;5;172m\]\u\[\e[m\]@\[\e[38;5;153m\]\h\[\e
 ALL_PROXY='socks5://127.0.0.1:60001'
 HTTP_PROXY='socks5://127.0.0.1:60001'
 HTTPS_PROXY='socks5://127.0.0.1:60001'
+
+# Update PATH
+if [ ! -d "$HOME/.local/bin" ]; then
+	mkdir -p $HOME/.local/bin
+fi
+if [[ ! ":$PATH:" =~ .*:$HOME/.local/bin:.* ]]; then
+	export "PATH=$HOME/.local/bin:$PATH"
+fi
 
 
 cat<<'EOF'
