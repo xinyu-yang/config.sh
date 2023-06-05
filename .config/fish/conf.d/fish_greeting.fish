@@ -3,7 +3,7 @@ function fish_greeting
   ___======____='(set_color FF7F00)'-'(set_color FF0)'-'(set_color FF7F00)'-='(set_color F00)')
 /T            \_'(set_color FF0)'--='(set_color FF7F00)'=='(set_color F00)')    '(set_color red)(whoami)'@'(hostname)'
 [ \ '(set_color FF7F00)'('(set_color FF0)'0'(set_color FF7F00)')   '(set_color F00)'\~    \_'(set_color FF0)'-='(set_color FF7F00)'='(set_color F00)')'(set_color yellow)'    Uptime: '(set_color white)(uptime | sed 's/.*up \([^,]*\), .*/\1/')(set_color red)'
- \      / )J'(set_color FF7F00)'~~    \\'(set_color FF0)'-='(set_color F00)')    OS: '(set_color white)(lsb_release -d | awk '{print $2 " " $3 " " $4}')(set_color red)'
+ \      / )J'(set_color FF7F00)'~~    \\'(set_color FF0)'-='(set_color F00)')    OS: '(set_color white)(bash -c 'source /etc/os-release && echo "$PRETTY_NAME"')(set_color red)'
   \\\\___/  )JJ'(set_color FF7F00)'~'(set_color FF0)'~~   '(set_color F00)'\)     '(set_color yellow)'Version: '(set_color white)(echo $FISH_VERSION)(set_color red)'
    \_____/JJJ'(set_color FF7F00)'~~'(set_color FF0)'~~    '(set_color F00)'\\
    '(set_color FF7F00)'/ '(set_color FF0)'\  '(set_color FF0)', \\'(set_color F00)'J'(set_color FF7F00)'~~~'(set_color FF0)'~~     '(set_color FF7F00)'\\
