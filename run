@@ -161,6 +161,7 @@ config_tmux(){
 	if [ ! -f "$HOME/.tmux.conf" ]; then
 		ln -s $CURRENT_PATH/.config/tmux/tmux.conf $HOME/.tmux.conf
 	fi
+	tmux source-file $HOME/.tmux.conf
 }
 
 
