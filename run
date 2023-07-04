@@ -186,6 +186,7 @@ config_vim(){
 		git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
 	fi
 	cd "$HOME/.vim"
+	git pull origin
 	/bin/bash ./setup.sh
 	cd -
 }
