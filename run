@@ -119,7 +119,6 @@ inst_lf_noroot(){
 config_lf(){
 	print_info "Processing lf ..."
 	if [ ! -d "$HOME/.config/lf" ]; then
-		[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
 		ln -s $CURRENT_PATH/.config/lf $HOME/.config/lf
 	fi
 }
@@ -195,6 +194,10 @@ config_vim(){
 ###################################
 # Preparations
 ###################################
+
+# Create config directory
+[ ! -d "$HOME/.config/" ] && mkdir "$HOME/.config/"
+
 # Test whether this user has sudo priviledge
 if (sudo -v > /dev/null);
 then
@@ -223,6 +226,7 @@ else
 	array=(lf)
 fi
 
+
 # Install prerequirements
 for app in ${array[*]}
 do
@@ -239,6 +243,7 @@ done
 # MAIN
 ###################################
 config_list=(bash fish tmux lf proxy vim)
+
 for app in ${config_list[*]}; do
 	config_${app}
 done
