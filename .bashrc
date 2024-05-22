@@ -34,6 +34,12 @@ if [[ ! ":$PATH:" =~ .*:$HOME/.local/bin:.* ]]; then
 fi
 
 
+# Include gh copilot alias
+if command -v gh > /dev/null -a command -v gh copilot > /dev/null; then
+	source .config/bash/copilot.bash
+fi
+
+
 cat<<'EOF'
            _..._
          .'     '.
