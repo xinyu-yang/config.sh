@@ -20,6 +20,7 @@ if [ -f "$CURRENT_PATH/.bashrc" ]; then
 	. "$CURRENT_PATH/.bashrc"
 fi'
 
+
 # Import bash_profile string
 import_bash_profile='
 # Import .bash_profile from config.sh (: MARKER :)
@@ -27,9 +28,11 @@ if [ -f "$CURRENT_PATH/.bash_profile" ]; then
 	. "$CURRENT_PATH/.bash_profile"
 fi'
 
+
 config_bash(){
 	# Update or link .bashrc
 	print_info "Processing .bashrc ..."
+
 
 	if [ -f "$HOME/.bashrc" ]; then
 		grep "$MARKER" $HOME/.bashrc > /dev/null
@@ -47,6 +50,7 @@ config_bash(){
 		ln -s $CURRENT_PATH/.bashrc $HOME/.bashrc
 	fi
 
+
 	# Update or link .bash_profile
 	print_info "Processing .bash_profile ..."
 	if [ -f "$HOME/.bash_profile" ]; then
@@ -63,7 +67,20 @@ config_bash(){
 		print_info "Linking $CURRENT_PATH/.bash_profile ..."
 		ln -s $CURRENT_PATH/.bash_profile $HOME/.bash_profile
 	fi
+
+
+	# Update or link fish config
+	if [ -d "$HOME/.config/bash" ]; then
+		if ! [ -f "$HOME/.config/bash/copilot.bash" ]; then
+			print_info "Linking .config/bash/copilot.bash ..."
+			ln -s $CURRENT_PATH/.config/bash/copilot.bash $HOME/.config/bash/copilot.bash
+		fi
+	else
+		print_info "Linking .config/bash ..."
+		ln -s $CURRENT_PATH/.config/bash $HOME/.config/bash
+	fi
 }
+
 
 
 ###################################

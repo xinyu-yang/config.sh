@@ -36,7 +36,7 @@ fi
 
 # Include gh copilot alias
 if command -v gh > /dev/null -a command -v gh copilot > /dev/null; then
-	source .config/bash/copilot.bash
+	source $HOME/.config/bash/copilot.bash
 fi
 
 
