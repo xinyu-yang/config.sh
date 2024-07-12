@@ -36,7 +36,7 @@ handle_mime() {
         text/troff) man ./ "${FILE_PATH}" | col -b ;;
         text/* | */xml)
             if [ "$( stat --printf='%s' -- "${FILE_PATH}" )" -gt "${HIGHLIGHT_SIZE_MAX}" ]; then
-                exit 2
+				head -c 5000 ${FILE_PATH}
             fi
             if [ "$( tput colors )" -ge 256 ]; then
                 local highlight_format='xterm256'
