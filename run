@@ -199,7 +199,14 @@ config_proxy(){
 config_vim(){
 	print_info "Configuring vim ..."
 	if [ ! -d "$HOME/.vim" ]; then
-		git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
+		# Check the validity of ssh connection
+		ssh -T git@github.com &> /dev/null
+		local status=$?
+		if [ $status -eq 1 ]; then
+			git clone git@github.com:xinyu-yang/myvim.git "$HOME/.vim"
+		else
+			git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
+		fi
 	fi
 	cd "$HOME/.vim"
 	git pull origin
