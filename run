@@ -198,17 +198,17 @@ config_proxy(){
 ###################################
 config_vim(){
 	print_info "Configuring vim ..."
-	if [ ! -d "$HOME/.vim" ]; then
+	if [ ! -d "$HOME/.config/nvim" ]; then
 		# Check the validity of ssh connection
 		ssh -T git@github.com &> /dev/null
 		local status=$?
 		if [ $status -eq 1 ]; then
-			git clone git@github.com:xinyu-yang/myvim.git "$HOME/.vim"
+			git clone git@github.com:xinyu-yang/myvim.git "$HOME/.config/nvim"
 		else
-			git clone https://github.com/xinyu-yang/myvim.git "$HOME/.vim"
+			git clone https://github.com/xinyu-yang/myvim.git "$HOME/.config/nvim"
 		fi
 	fi
-	cd "$HOME/.vim"
+	cd "$HOME/.config/nvim"
 	git pull origin
 	/bin/bash ./setup.sh
 	cd -
