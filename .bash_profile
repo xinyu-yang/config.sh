@@ -6,7 +6,7 @@
 export EDITOR="vim"
 export TERMINAL="st"
 export BROWSER="firefox"
-export TERM="xterm-256color"
+export TERM="tmux-256color"
 
 # ~/ Clean-up:
 export XDG_CONFIG_HOME="$HOME/.config"
