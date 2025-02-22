@@ -3,7 +3,7 @@
 # This config file is only called in login shell.
 
 # Default programs:
-export EDITOR="vim"
+export EDITOR="nvim"
 export TERMINAL="st"
 export BROWSER="firefox"
 export TERM="tmux-256color"
